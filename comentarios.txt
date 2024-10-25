@@ -1,0 +1,33 @@
+usuario mongo: contaalonso
+
+password mongo: cEwgMNdGl7XQn079
+
+mongodb+srv://contaalonso:cEwgMNdGl7XQn079@cluster0.k4x1q.mongodb.net/proshop-udemy
+
+
+// ProductScreen -  NOTA PERSONAL ---- Qué pasa si el ítem tiene muchas unidades en stock?
+// ProductListScreen - NOTA PERSONAL --- Mejor usar Sweet Alert cuando se crea un producto. 
+// ProductListScreen - NOTA PERSONAL --- Que en la planilla también se muestre stocks.
+// Borrado de productos: no se borran las imágenes de la base de datos. 
+// Backend -> userController -> sería una buena idea evitar con un if que tampoco se pueda borrar un usuario que tenga órdenes pagadas pero no delivered?
+// Frontend -> ver de mostrar pocas reviews o un scroll
+// Paginate: agregárselo al listado de users y orders. 
+// Paginate: crear un query distinto en backend (u otro mecanismo) para que listproducts en admin traiga más de 4
+// Frontend: Mejorar el carousel, especialmente donde se ve el cuadrado gris
+// Frontend: favicon,  incluso poner favicon en el componente Meta
+
+Paypal:
+
+CLIENT ID: ATR1BEcqne2m_JOj0ExMcablS2Ny7SUoAbBoemssa_oGP3D9bL9XFBvTPIRD84BLZA90PYM-zjbbu1e7
+
+SECRET KEY: EPXZc8ajtOZersby7ZxRlAIo0-qqjX1_yMLNImzS379W65cLQzdTms5xV0LmzTB4kuBv4Zc4oqA8rAuZ
+
+
+PACKAGES:
+
+BACKEND:
+npm i multer
+
+FRONTEND:
+npm i @paypal/react-paypal-js
+npm i react-helmet-async
