@@ -1,6 +1,11 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import jwt from "jsonwebtoken";
+import {
+  generateResetToken,
+  sendResetPasswordEmail,
+} from "../utils/passwordReset.js";
 
 // @desc     Auth user & get token
 // @route    POST /api/users/login
@@ -183,6 +188,70 @@ const updateUser = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc     Request link to change password
+// @route    PUT /api/users/forgotPassword
+// @access   Public
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    res.status(404);
+    throw new Error("Usuario no encontrado");
+  }
+
+  const resetToken = generateResetToken(user);
+
+  user.reset_password_token = resetToken;
+  user.reset_password_expires = Date.now() + 3600000;
+  await user.save();
+
+  try {
+    await sendResetPasswordEmail(email, resetToken);
+    res.json({
+      message: "Enlace de restablecimiento de contraseña enviado",
+      token: resetToken,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error al enviar el correo electrónico" });
+  }
+});
+
+// @desc     Use JWT token to reset password
+// @route    PUT /api/users/resetPassword
+// @access   Public
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    if (user.reset_password_token !== token) {
+      return res.status(400).json({ message: "Token inválido" });
+    }
+
+    if (user.reset_password_expires < Date.now()) {
+      return res.status(400).json({ message: "Token expirado" });
+    }
+
+    user.password = newPassword;
+    user.reset_password_token = undefined;
+    user.reset_password_expires = undefined;
+
+    await user.save();
+
+    res.json({ message: "Contraseña restablecida con éxito" });
+  } catch (error) {
+    console.error(`Error al verificar el token: ${error.message}`);
+    res.status(400).json({ message: "Token inválido o expirado" });
+  }
+});
+
 
 export {
   authUser,
@@ -194,4 +263,6 @@ export {
   deleteUser,
   getUserById,
   updateUser,
+  forgotPassword,
+  resetPassword,
 };

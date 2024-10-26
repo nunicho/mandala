@@ -66,19 +66,31 @@ const LoginScreen = () => {
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
-        <Button type='submit' variant="primary" className="mt-2" disabled={isLoading} >
-            Sign In
+        <Button
+          type="submit"
+          variant="primary"
+          className="mt-2"
+          disabled={isLoading}
+        >
+          Sign In
         </Button>
 
         {isLoading && <Loader />}
+      </Form>
 
-       </Form>
-
-       <Row className="py-3">
-          <Col>
-             New Customer? <Link to={redirect ? `/register?redirect=${redirect}`: '/register'}>Register</Link>
-          </Col>
-       </Row>
+      <Row className="py-3">
+        <Col>
+          New Customer?{" "}
+          <Link to={redirect ? `/register?redirect=${redirect}` : "/register"}>
+            Register
+          </Link>
+        </Col>
+      </Row>
+      <Row className="py-3">
+        <Col>
+          <Link to="/forgotpassword">¿Olvidaste tu contraseña?</Link>
+        </Col>
+      </Row>
     </FormContainer>
   );
 };
