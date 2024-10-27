@@ -11,20 +11,22 @@ import ProductCarousel from "../components/ProductCarousel";
 import { useGetProductsQuery } from "../slices/productsApiSlice";
 
 const HomeScreen = () => {
-  const { pageNumber, keyword } = useParams();
+  const { pageNumber, keyword, category } = useParams(); // Añadir category
 
+  // Incluir category en la consulta
   const { data, isLoading, error } = useGetProductsQuery({
     keyword,
+    category,
     pageNumber,
   });
 
   return (
     <>
-      {!keyword ? (
+      {!keyword && !category ? ( // Comprobar también si no hay category
         <ProductCarousel />
       ) : (
         <Link to="/" className="btn btn-light mb-4">
-          Go Back
+          Regresar
         </Link>
       )}
       {isLoading ? (
@@ -35,7 +37,7 @@ const HomeScreen = () => {
         </Message>
       ) : (
         <>
-          <h1>Latest Products</h1>
+          <h1>Nuestros productos</h1>
           <Row>
             {data.products.map((product) => (
               <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
@@ -47,6 +49,7 @@ const HomeScreen = () => {
             pages={data.pages}
             page={data.page}
             keyword={keyword ? keyword : ""}
+            category={category ? category : ""} // Pasar category a Paginate si es necesario
           />
         </>
       )}

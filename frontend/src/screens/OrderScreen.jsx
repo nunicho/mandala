@@ -28,7 +28,7 @@ const OrderScreen = () => {
     error,
   } = useGetOrderDetailsQuery(orderId);
 
-  const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation(); //renombramos isLoading a loadingPay porque ya usamos antes otro isLoading
+  const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
 
   const [deliverOrder, { isLoading: loadingDeliver }] =
     useDeliverOrderMutation();
@@ -68,20 +68,12 @@ const OrderScreen = () => {
       try {
         await payOrder({ orderId, details }).unwrap();
         refetch();
-        toast.success("Payment successful");
+        toast.success("Pago exitoso");
       } catch (err) {
         toast.error(err?.data?.message || err?.message);
       }
     });
   }
-
-  /*
-  async function onApproveTest() {
-     await payOrder({orderId, details: {payer: {}}});
-        refetch();
-        toast.success('Payment successful')
-  }
-  */
 
   function onError(err) {
     toast.error(err.message);
@@ -107,11 +99,16 @@ const OrderScreen = () => {
     try {
       await deliverOrder(orderId);
       refetch();
-      toast.success("Order delivered");
+      toast.success("Orden enviada");
     } catch (err) {
       toast.error(err?.data?.message || err.message);
     }
   };
+
+  // Calcular la sumatoria de los precios de los items
+  const itemsPrice = order
+    ? order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+    : 0;
 
   return isLoading ? (
     <Loader />
@@ -119,14 +116,14 @@ const OrderScreen = () => {
     <Message variant="danger">{error?.data?.message || error.error}</Message>
   ) : (
     <>
-      <h1>Order {order._id}</h1>
+      <h1>Orden {order._id}</h1>
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">
             <ListGroup.Item>
-              <h2>Shipping</h2>
+              <h2>Envío</h2>
               <p>
-                <strong>Name: </strong>
+                <strong>Nombre: </strong>
                 {order.user.name}
               </p>
               <p>
@@ -134,33 +131,33 @@ const OrderScreen = () => {
                 {order.user.email}
               </p>
               <p>
-                <strong>Address: </strong>
+                <strong>Dirección: </strong>
                 {order.shippingAddress.address}, {order.shippingAddress.city}{" "}
                 {order.shippingAddress.postalCode},{" "}
                 {order.shippingAddress.country}
               </p>
               {order.isDelivered ? (
                 <Message variant="success">
-                  Delivered on {order.deliveredAt}
+                  Enviada el {order.deliveredAt}
                 </Message>
               ) : (
-                <Message variant="danger">Not delivered</Message>
+                <Message variant="danger">No enviada</Message>
               )}
             </ListGroup.Item>
             <ListGroup.Item>
-              <h2>Payment Method</h2>
+              <h2>Método de pago</h2>
               <p>
-                <strong>Method: </strong>
+                <strong>Método: </strong>
                 {order.paymentMethod}
               </p>
               {order.isPaid ? (
-                <Message variant="success">Paid on {order.paidAt}</Message>
+                <Message variant="success">Pagada el {order.paidAt}</Message>
               ) : (
-                <Message variant="danger">Not Paid</Message>
+                <Message variant="danger">No pagada</Message>
               )}
             </ListGroup.Item>
             <ListGroup.Item>
-              <h2>Order Items</h2>
+              <h2>Items en la orden</h2>
               {order.orderItems.map((item, index) => (
                 <ListGroup.Item key={index}>
                   <Row>
@@ -183,19 +180,19 @@ const OrderScreen = () => {
           <Card>
             <ListGroup variant="flush">
               <ListGroup.Item>
-                <h2>Order Summary</h2>
+                <h2>Detalle de la orden</h2>
               </ListGroup.Item>
               <ListGroup.Item>
                 <Row>
                   <Col>Items</Col>
-                  <Col>${order.itemsPrice}</Col>
+                  <Col>${itemsPrice.toFixed(2)}</Col>
                 </Row>
                 <Row>
-                  <Col>Shipping</Col>
+                  <Col>Envío</Col>
                   <Col>${order.shippingPrice}</Col>
                 </Row>
                 <Row>
-                  <Col>Tax</Col>
+                  <Col>Impuestos</Col>
                   <Col>${order.taxPrice}</Col>
                 </Row>
                 <Row>
@@ -204,7 +201,7 @@ const OrderScreen = () => {
                 </Row>
               </ListGroup.Item>
 
-              {!order.isPaid && (
+              {!order.isPaid && !order.isExpired && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
 
@@ -212,21 +209,19 @@ const OrderScreen = () => {
                     <Loader />
                   ) : (
                     <div>
-                      {/* <Button
-                        onClick={onApproveTest}
-                        style={{ marginBottom: "10px" }}
-                      >
-                        Test Pay Order
-                      </Button> */}
-                      <div>
-                        <PayPalButtons
-                          createOrder={createOrder}
-                          onApprove={onApprove}
-                          onError={onError}
-                        ></PayPalButtons>
-                      </div>
+                      <PayPalButtons
+                        createOrder={createOrder}
+                        onApprove={onApprove}
+                        onError={onError}
+                      ></PayPalButtons>
                     </div>
                   )}
+                </ListGroup.Item>
+              )}
+
+              {!order.isPaid && order.isExpired && (
+                <ListGroup.Item>
+                  <Message variant="danger">Orden vencida</Message>
                 </ListGroup.Item>
               )}
 
@@ -238,11 +233,11 @@ const OrderScreen = () => {
                 !order.isDelivered && (
                   <ListGroup.Item>
                     <Button
-                      type="Button"
+                      type="button"
                       className="btn btn-block"
                       onClick={deliverOrderHandler}
                     >
-                      Mark as delivered
+                      Marcar como enviada
                     </Button>
                   </ListGroup.Item>
                 )}

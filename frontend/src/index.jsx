@@ -34,12 +34,19 @@ import UserListScreen from "./screens/admin/UserListScreen.jsx";
 import UserEditScreen from "./screens/admin/UserEditScreen.jsx";
 import PasswordResetScreen from "./screens/PasswordResetScreen.jsx";
 import PasswordForgotScreen from "./screens/PasswordForgotScreen.jsx";
+import PromotionListScreen from "./screens/admin/PromotionListScreen.jsx";
+import PromotionEditScreen from "./screens/admin/PromotionEditScreen.jsx";
+import PromotionProductsScreen from "./screens/admin/PromotionProductsScreen.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index={true} path="/" element={<HomeScreen />} />
       <Route path="/search/:keyword" element={<HomeScreen />} />
+      <Route
+        path="search/category/:category"
+        element={<HomeScreen />}
+      />
       <Route path="/page/:pageNumber" element={<HomeScreen />} />
       <Route
         path="/search/:keyword/page/:pageNumber"
@@ -70,6 +77,15 @@ const router = createBrowserRouter(
         <Route path="/admin/product/:id/edit" element={<ProductEditScreen />} />
         <Route path="/admin/userlist" element={<UserListScreen />} />
         <Route path="/admin/user/:id/edit" element={<UserEditScreen />} />
+        <Route path="/admin/promotions" element={<PromotionListScreen />} />
+        <Route
+          path="/admin/promotions/:id/edit"
+          element={<PromotionEditScreen />}
+        />
+        <Route
+          path="/admin/promotions/:id/products"
+          element={<PromotionProductsScreen />}
+        />
       </Route>
     </Route>
   )
@@ -89,14 +105,3 @@ root.render(
 );
 
 reportWebVitals();
-
-/*
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    //<Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </React.StrictMode>
-);
-*/

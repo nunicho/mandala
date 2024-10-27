@@ -5,12 +5,13 @@ import { apiSlice } from "./apiSlice";
 export const productsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProducts: builder.query({
-      query: ({ keyword, pageNumber }) => ({
+      query: ({ keyword, category, pageNumber }) => ({
         url: PRODUCTS_URL,
-        params:{
+        params: {
           keyword,
+          category, // Añadir category aquí
           pageNumber,
-        }
+        },
       }),
       keepUnusedDataFor: 5,
       providesTags: ["Products"],
@@ -46,24 +47,37 @@ export const productsApiSlice = apiSlice.injectEndpoints({
     }),
     deleteProduct: builder.mutation({
       query: (productId) => ({
-        url:`${PRODUCTS_URL}/${productId}`,
-        method: 'DELETE',        
-      })
+        url: `${PRODUCTS_URL}/${productId}`,
+        method: "DELETE",
+      }),
     }),
     createReview: builder.mutation({
-      query: (data) =>({
-        url:`${PRODUCTS_URL}/${data.productId}/reviews`,
-        method: 'POST',
+      query: (data) => ({
+        url: `${PRODUCTS_URL}/${data.productId}/reviews`,
+        method: "POST",
         body: data,
       }),
-      invalidatesTags:['Product'],
+      invalidatesTags: ["Product"],
     }),
     getTopProducts: builder.query({
-      query: () =>({
-        url: `${PRODUCTS_URL}/top`
+      query: () => ({
+        url: `${PRODUCTS_URL}/top`,
       }),
       keepUnusedDataFor: 5,
-    })
+    }),
+    updateProductStock: builder.mutation({
+      query: ({ productId, stock }) => ({
+        url: `${PRODUCTS_URL}/${productId}`,
+        method: "PATCH", // O el método adecuado para actualizar el stock
+        body: { stock },
+      }),
+    }),
+    getCategories: builder.query({
+      query: () => ({
+        url: `${PRODUCTS_URL}/categories`,
+      }),
+      keepUnusedDataFor: 5,
+    }),
   }),
 });
 
@@ -76,4 +90,6 @@ export const {
   useDeleteProductMutation,
   useCreateReviewMutation,
   useGetTopProductsQuery,
+  useUpdateProductStockMutation,
+  useGetCategoriesQuery,
 } = productsApiSlice; // es una convención, exportarla con use//nombre//Query-Mutation

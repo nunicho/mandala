@@ -28,17 +28,17 @@ export const CartScreen = () => {
     dispatch(removeFromCart(id));
   };
 
-  const checkoutHandler = () =>{
-    navigate('/login?redirect=/shipping')
-  }
+  const checkoutHandler = () => {
+    navigate("/login?redirect=/shipping");
+  };
 
   return (
     <Row>
       <Col md={8}>
-        <h1 style={{ marginBottom: "20px" }}>Shopping Cart</h1>
+        <h1 style={{ marginBottom: "20px" }}>Carrito</h1>
         {cartItems.length === 0 ? (
           <Message>
-            Your cart is empty. <Link to="/">Go Back</Link>
+            Tu carrito está vacío. <Link to="/">Regresar</Link>
           </Message>
         ) : (
           <ListGroup variant="flush">
@@ -68,7 +68,11 @@ export const CartScreen = () => {
                     </Form.Control>
                   </Col>
                   <Col md={2}>
-                    <Button type="button" variant="light" onClick={()=> removeFromCartHandler(item._id)}>
+                    <Button
+                      type="button"
+                      variant="light"
+                      onClick={() => removeFromCartHandler(item._id)}
+                    >
                       <FaTrash />
                     </Button>
                   </Col>
