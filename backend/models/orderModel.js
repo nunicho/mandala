@@ -21,22 +21,10 @@ const orderSchema = mongoose.Schema(
       },
     ],
     shippingAddress: {
-      address: {
-        type: String,
-        required: true,
-      },
-      city: {
-        type: String,
-        required: true,
-      },
-      postalCode: {
-        type: String,
-        required: true,
-      },
-      country: {
-        type: String,
-        required: true,
-      },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+      postalCode: { type: String, required: true },
+      country: { type: String, required: true },
     },
     paymentMethod: {
       type: String,
@@ -47,11 +35,6 @@ const orderSchema = mongoose.Schema(
       status: { type: String },
       update_time: { type: String },
       email_address: { type: String },
-    },
-    itemsPrice: {
-      type: Number,
-      required: true,
-      default: 0.0,
     },
     taxPrice: {
       type: Number,
@@ -84,12 +67,17 @@ const orderSchema = mongoose.Schema(
     deliveredAt: {
       type: Date,
     },
+    isExpired: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const Order = mongoose.model("Order", orderSchema)
+const Order = mongoose.model("Order", orderSchema);
 
-export default Order
+export default Order;
