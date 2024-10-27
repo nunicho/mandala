@@ -49,7 +49,6 @@ const router = createBrowserRouter(
       <Route path="/cart" element={<CartScreen />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/register" element={<RegisterScreen />} />
-
       <Route path="/resetpassword" element={<PasswordResetScreen />} />
       <Route path="/forgotpassword" element={<PasswordForgotScreen />} />
 
